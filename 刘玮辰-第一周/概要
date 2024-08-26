@@ -1,0 +1,1 @@
+在Linux平台配置了mpich4.2.2环境，并学习了mpi基本框架，以及MPI_Reduce, MPI_Bcast, MPI_Gather, MPI_Scatter的使用方法。
