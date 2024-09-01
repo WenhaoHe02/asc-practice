@@ -1,0 +1,1 @@
+学习了MPI_Wtime, MPI_Barrier，以及初步入门了MPI_Group的操作，比如MPI_Group_incl(), MPI_Group_rank()等。
