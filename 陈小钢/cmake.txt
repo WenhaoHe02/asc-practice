@@ -1,0 +1,79 @@
+CMake
+一、语法特性
+1.基本语法格式：指令（参数1，参数2..）
+  1. 参数用括号括起
+  2. 参数之间用空格或分号分开
+2.指令是大小写无关的，参数是大小写相关的
+set(HELLO hello.cpp)  //表示HELLO这个变量的值是hello.cpp
+add_executable(hello main.cpp hello.cpp)
+ADD_EXECUTABLE(hello main.cpp ${HELLO})
+3.变量使用${}的方式取值，但是在IF控制语句中直接使用变量名
+二、重要指令和CMake常用变量
+1.cmake_minimum_required 指定CMake的最小版本要求
+  - 语法：CMake_minimun_required(VERSION versionNumber [FATAL_ERROR])
+#CMake最小版本要求为2.8.3
+CMake_minimum_required(VERSION 2.8.3)
+2.project 定义工程名称，并指定工程支持的语言
+  - 语法：project(projectname [CXX] [C] [Java])
+#指定工程名称为HELLOWORLD
+project(HELLOWORLD)
+3.set 显式的定义变量
+  - 语法：set(VAR [VALUE] [CACHE TYPE DOCSTRING [FORCE]])
+#定义SRC变量，其值为main.cpp hello.cpp
+set(SRC hello.cpp main.cpp)
+4.include_directories 向工程添加多个特定的头文件搜索路径
+  - 语法：include_directories([AFTER|BEFORE] [SYSTEM] dir1 dir2 ..)
+#将/usr/include/myincludefolder 和 ./include添加到头文件
+include_directories(/usr/include/myincludefolder ./include)
+5.link_directories 向工程添加多个特定的特文件搜索路径 
+  - 语法：同上
+6.add_library 生成库文件
+  - 语法：add_library(libname [SHARED|STATIC|MODULE] [EXCLUDE_FROM_ALL] source1 source2 ...)
+#通过变量SRC生成libhello.so共享库
+add_library(hello SHARED ${SRC})
+7.add_compile_options 添加编译参数
+  - 语法：add_compile_options(<options> ...)
+#添加编译参数 -wall -std=c++11
+add_compile_options(-wall -std=c++11 -o2)
+8.add_executable 生成可执行框架
+  - 语法：add_library(exename source1 source2 ...)
+#编译main.cpp为可执行文件
+add_executable(main main.cpp)
+9.target_link_libraries 为target添加需要连接的共享库
+  - 语法：target_link_libraries(target library1<debug | optimized> labrary2..)
+#将hello动态库文件链接到main
+target_link_libraries(main hello)
+10.add_subdirectory 向当前工程添加存放源文件的子目录，并可以指定中间二进制和目标二进制的位置
+  - 语法：aux_source_directory(dir VARIABLE)
+#添加src子目录，src中需有一个CMakeLists.txt
+add_subdirectory(. SRC)
+#编译SRC变量所代表的源代码文件，生成main可执行文件
+add_exeutable(main ${SRC})
+三、CMake常用变量
+1.CMake_C_FLAGS   gcc编译选项
+2.CMake_CXX_FLAGS   g++编译选项
+#在CMake_CXX_FLAGS编译选项后追加-std=c++11
+set( CMake_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
+3.CMake_BUILD_TYPE   编译类型（Debug,Release）
+#设定编译类型为debug，调试时需要选择debug
+set(CMAKE_BUILD_DEBUG)
+四、CMake编译工程
+  CMake目录结构：项目主目录存在一个CMakeLists.txt文件
+两种方式设置编译规则
+    1. 包含源文件的子文件夹包含CMakeLists.txt文件，主目录的CMakeLists.txt通过add_subdirectory添加子目录
+    2. 包含源文件的子文件夹未包含CMakeLists.txt文件，子目录编译规则体现在主目录的CMakeLists.txt中
+五、编译流程
+在linux平台下使用CMake构建C/C++的流程如下
+    1. 手动编写CMakeLists.txt
+    2. 执行命令cmake PATH生成Makefile(PATH是顶层CMakeLists.txt所在的目录)
+    3. 执行make命令进行编译
+ 六、外部构建方式
+    将编译输出的文件与源文件放到不同的目录中
+#1.在当前目录下，创建build文件夹
+mkdir build
+#2.进入到build文件夹
+cd build
+#3.编译上级目录的CMakeLists.txt,生成Makefile和其他文件
+cmake ..
+#4.执行make命令生成target
+make

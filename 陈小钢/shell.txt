@@ -1,0 +1,82 @@
+Shell
+一、变量，赋值等基础语法
+  - 变量赋值
+#不需要定义变量,不能有空格
+#$符号表示某个变量的值
+bar=foo
+echo $bar  输出foo
+#echo $foo 不会输出值
+#用""将有空格的参数包含
+  - 输出
+
+#双引号字符串中$表示输出该变量，单引号不会替换
+echo "Value is $foo"
+#输出Valus is bar
+echo 'Value is $foo'
+#输出Value is $foo
+  - 函数定义
+#使用vim建立并且编辑一个文件,文件内容是函数源码
+#使用source运行该函数
+vim mcd.sh
+    mcd(){
+        mkdir -p "$1"
+        cd "$1"
+    }
+source mcd.sh
+#之后可以直接使用mcd函数
+mcd hello
+#创建hello目录，并且进入当前那目录
+  - 参数的传递和基本符号
+#在linux中，可以通过$1,$2 .. $n将参数传递进入函数
+#$1包含脚本的名称和命令本身
+#!/bin/bash
+###注意#！表示告诉系统使用后面路径下的编译器  
+echo "Hello, $1!"
+./greet.sh Alice
+#输出
+Hello Alice
+#$?可以获得上一个命令的错误代码，$_表示获取上一个命令的最后一个参数
+#！！表示执行上一次命令
+#||表示如果前一个不是true则会执行后一个
+#&&表示前一个是true才会执行后一个
+#;执行前后两个命令
+#$#表示参数数量
+#$$表示正在进行某个程序的id
+#$@表示展开所有变量，并且用$file表示变量
+#shellcheck可以检查文件中的错误
+#可以使用$()来赋值
+foo=$(pwd)
+echo $foo
+#输出pwd
+for file in "$@"; do  
+    grep foobar "$file" > /dev/null 2> /dev/null  
+    if [ "$?" -ne 0 ]; then  
+        echo "File $file has no foobar"  
+        echo "# foobar" >> "$file"  
+    fi  
+done
+#将枚举每一个参数，并且检查有无foobar
+##如果有grep会返回1,没有会返回0
+#判断返回值，并且操作
+###  -ne为整数比较符（不相等），类似的还有-f检测文件是否存在等
+#?表示匹配当前字符后面多一个字符的文件
+
+  - 常用命令
+#将图片从jpg格式转换为png格式
+convert image.jpg image.png
+convert image.{jpg png}
+#创建连续文件或目录(创建foo1,foo2,foo10)
+touch foo{,1,2,10}
+
+二、在shell中运行其他语言
+  - 流程
+    1. 使用编辑器创建一个该语言后缀的代码文本
+    2. 使用该语言名字加该文本进行运行
+#python脚本
+import sys                                  #使系统可以直接执行，告诉系统使用python解释器
+for arg in reversed(sys.argv[1:]): 
+    print(arg)
+#sys.argv[1:]表示识别命令后面的变量，并且从1开始
+ #运行该程序
+python3 python.py a b c
+#输出c b a
